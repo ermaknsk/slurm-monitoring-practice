@@ -1,0 +1,41 @@
+- name: Create node_exporter user
+  user:
+    name: node_exporter
+    system: yes
+    shell: /sbin/nologin
+    create_home: no
+
+- name: Download Node Exporter binary
+  get_url:
+    url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+    dest: /tmp/node_exporter.tar.gz
+
+- name: Extract Node Exporter
+  unarchive:
+    src: /tmp/node_exporter.tar.gz
+    dest: /usr/local/bin/
+    remote_src: yes
+
+- name: Copy systemd service file
+  copy:
+    src: node_exporter.service
+    dest: /etc/systemd/system/node_exporter.service
+    mode: '0644'
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Start and enable Node Exporter service
+  systemd:
+    name: node_exporter
+    state: started
+    enabled: yes
+
+- name: Add new host to Prometheus config
+  lineinfile:
+    path: /etc/prometheus/prometheus.yml
+    regexp: 'targets:'
+    line: '  - targets:\n    - {{ inventory_hostname }}:9100'
+    insertafter: '^  static_configs:'
+  notify: reload prometheus

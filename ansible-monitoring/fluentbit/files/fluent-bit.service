@@ -1,0 +1,13 @@
+[Unit]
+Description=Fluent Bit
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=notify
+Environment="FLUENTBIT_CONF=/etc/fluent-bit/fluent-bit.conf"
+ExecStart=/usr/bin/fluent-bit -c ${FLUENTBIT_CONF}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

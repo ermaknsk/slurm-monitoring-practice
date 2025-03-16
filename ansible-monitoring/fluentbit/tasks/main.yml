@@ -1,0 +1,34 @@
+- name: Install Fluent Bit repository
+  apt_repository:
+    repo: "deb https://packages.fluentbit.io/ubuntu/focal focal main"
+    state: present
+    update_cache: yes
+
+- name: Install Fluent Bit
+  apt:
+    name: fluent-bit
+    state: present
+
+- name: Configure Fluent Bit
+  template:
+    src: fluent-bit.conf.j2
+    dest: /etc/fluent-bit/fluent-bit.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copy systemd service file
+  copy:
+    src: fluent-bit.service
+    dest: /etc/systemd/system/fluent-bit.service
+    mode: '0644'
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Start and enable Fluent Bit service
+  systemd:
+    name: fluent-bit
+    state: started
+    enabled: yes

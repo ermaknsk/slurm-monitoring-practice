@@ -1,0 +1,49 @@
+- name: Install Elasticsearch repository
+  apt_repository:
+    repo: "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
+    state: present
+    update_cache: yes
+
+- name: Install Elasticsearch
+  apt:
+    name: elasticsearch
+    state: present
+
+- name: Configure Elasticsearch
+  template:
+    src: elasticsearch.yml.j2
+    dest: /etc/elasticsearch/elasticsearch.yml
+    owner: elasticsearch
+    group: elasticsearch
+    mode: '0644'
+
+- name: Start and enable Elasticsearch service
+  systemd:
+    name: elasticsearch
+    state: started
+    enabled: yes
+
+- name: Install Kibana repository
+  apt_repository:
+    repo: "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
+    state: present
+    update_cache: yes
+
+- name: Install Kibana
+  apt:
+    name: kibana
+    state: present
+
+- name: Configure Kibana
+  template:
+    src: kibana.yml.j2
+    dest: /etc/kibana/kibana.yml
+    owner: kibana
+    group: kibana
+    mode: '0644'
+
+- name: Start and enable Kibana service
+  systemd:
+    name: kibana
+    state: started
+    enabled: yes

@@ -1,0 +1,7 @@
+- hosts: all
+  become: true
+  roles:
+    - prometheus
+    - node_exporter
+    - elasticsearch_kibana
+    - fluentbit

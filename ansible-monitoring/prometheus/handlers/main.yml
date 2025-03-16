@@ -1,0 +1,2 @@
+- name: reload prometheus
+  command: kill -HUP $(cat /run/prometheus.pid)

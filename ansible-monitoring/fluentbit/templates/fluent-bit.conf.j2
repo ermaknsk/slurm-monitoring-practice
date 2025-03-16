@@ -1,0 +1,20 @@
+[SERVICE]
+    Flush        1
+    Log_Level    info
+    Daemon       Off
+    Parsers_File parsers.conf
+
+[INPUT]
+    Name   systemd
+    Tag    system.*
+    Systemd_Filter _SYSTEMD_UNIT=*
+
+[OUTPUT]
+    Name   es
+    Match  *
+    Host   {{ elasticsearch_host }}
+    Port   9200
+    Index  logs
+    Type   doc
+    HTTP_User elastic
+    HTTP_Passwd changeme
